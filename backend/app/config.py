@@ -25,6 +25,11 @@ class Settings:
     hermes_base_url: str = "http://hermes:8001"
     hermes_timeout_seconds: float = 240.0
     recent_window_hours: float = 48.0
+    x_source: str = "fake"
+    x_bearer_token: str = ""
+    x_user_id: str = ""
+    x_api_base_url: str = "https://api.x.com"
+    x_limit: int = 20
     clock: Callable[[], datetime] = local_now
 
     @classmethod
@@ -39,4 +44,9 @@ class Settings:
             hermes_base_url=os.getenv("HERMES_BASE_URL", "http://hermes:8001").rstrip("/"),
             hermes_timeout_seconds=float(os.getenv("HERMES_TIMEOUT_SECONDS", "240")),
             recent_window_hours=max(float(os.getenv("SEVO_RECENT_WINDOW_HOURS", "48")), 1.0),
+            x_source=os.getenv("SEVO_X_SOURCE", "fake").casefold(),
+            x_bearer_token=os.getenv("X_BEARER_TOKEN", ""),
+            x_user_id=os.getenv("X_USER_ID", ""),
+            x_api_base_url=os.getenv("X_API_BASE_URL", "https://api.x.com"),
+            x_limit=min(max(int(os.getenv("X_TIMELINE_LIMIT", "20")), 5), 100),
         )

@@ -24,6 +24,11 @@ services:
       HERMES_MAX_ITERATIONS: ${HERMES_MAX_ITERATIONS:-2}
       HERMES_FAST_PATH: ${HERMES_FAST_PATH:-false}
       SEVO_RECENT_WINDOW_HOURS: ${SEVO_RECENT_WINDOW_HOURS:-48}
+      SEVO_X_SOURCE: ${SEVO_X_SOURCE:-fake}
+      X_BEARER_TOKEN: ${X_BEARER_TOKEN:-}
+      X_USER_ID: ${X_USER_ID:-}
+      X_API_BASE_URL: ${X_API_BASE_URL:-https://api.x.com}
+      X_TIMELINE_LIMIT: ${X_TIMELINE_LIMIT:-20}
     volumes:
       - ./hermes_service:/sevo/hermes_service:ro
       - ./backend/app:/sevo/backend/app:ro
@@ -46,6 +51,11 @@ services:
       HERMES_BASE_URL: http://hermes:8001
       HERMES_TIMEOUT_SECONDS: ${HERMES_TIMEOUT_SECONDS:-240}
       SEVO_RECENT_WINDOW_HOURS: ${SEVO_RECENT_WINDOW_HOURS:-48}
+      SEVO_X_SOURCE: ${SEVO_X_SOURCE:-fake}
+      X_BEARER_TOKEN: ${X_BEARER_TOKEN:-}
+      X_USER_ID: ${X_USER_ID:-}
+      X_API_BASE_URL: ${X_API_BASE_URL:-https://api.x.com}
+      X_TIMELINE_LIMIT: ${X_TIMELINE_LIMIT:-20}
     volumes:
       - ./data:/app/data:ro
       - sevo_storage:/app/storage

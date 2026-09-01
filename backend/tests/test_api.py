@@ -9,6 +9,13 @@ def test_health(client: TestClient) -> None:
     assert response.json() == {"status": "ok", "service": "Sevo"}
 
 
+def test_sources_report_fake_x_by_default(client: TestClient) -> None:
+    response = client.get("/api/sources")
+    assert response.status_code == 200
+    x_source = next(source for source in response.json()["sources"] if source["id"] == "x")
+    assert x_source["status"] == "fake"
+
+
 def test_events_are_normalized_and_persisted(client: TestClient) -> None:
     response = client.get("/api/events")
     assert response.status_code == 200

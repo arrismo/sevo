@@ -6,10 +6,11 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 import logging
 from time import perf_counter
+from typing import Protocol
 
 from app.tools.calendar_tool import FakeCalendarTool
 from app.tools.eufy_tool import FakeEufyTool
-from app.tools.x_tool import FakeXTool
+from app.tools.models import XPost
 
 from .models import EventCreate
 from .repository import EventRepository
@@ -35,11 +36,15 @@ class SourceSnapshot:
         )
 
 
+class XTimelineTool(Protocol):
+    def get_x_timeline(self) -> list[XPost]: ...
+
+
 class EventService:
     def __init__(
         self,
         repository: EventRepository,
-        x_tool: FakeXTool,
+        x_tool: XTimelineTool,
         eufy_tool: FakeEufyTool,
         calendar_tool: FakeCalendarTool,
     ) -> None:

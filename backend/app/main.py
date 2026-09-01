@@ -19,7 +19,7 @@ from app.events.repository import EventRepository
 from app.events.service import EventService
 from app.tools.calendar_tool import FakeCalendarTool
 from app.tools.eufy_tool import FakeEufyTool
-from app.tools.x_tool import FakeXTool
+from app.tools.x_tool import FakeXTool, XApiTool
 
 logger = logging.getLogger(__name__)
 
@@ -31,9 +31,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def lifespan(app: FastAPI):
         repository = EventRepository(app_settings.database_path)
         repository.initialize()
+        x_tool = (
+            XApiTool(
+                bearer_token=app_settings.x_bearer_token,
+                user_id=app_settings.x_user_id,
+                base_url=app_settings.x_api_base_url,
+                limit=app_settings.x_limit,
+            )
+            if app_settings.x_source == "api"
+            else FakeXTool(app_settings.data_dir)
+        )
         event_service = EventService(
             repository=repository,
-            x_tool=FakeXTool(app_settings.data_dir),
+            x_tool=x_tool,
             eufy_tool=FakeEufyTool(app_settings.data_dir),
             calendar_tool=FakeCalendarTool(app_settings.data_dir),
         )
