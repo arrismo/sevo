@@ -11,6 +11,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import catch_up, chat, events, health, sources
+from app.agent.hermes import HermesClient
 from app.catch_up import CatchUpService
 from app.chat import ChatService
 from app.config import Settings
@@ -41,6 +42,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.event_service = event_service
         app.state.catch_up_service = CatchUpService(event_service)
         app.state.chat_service = ChatService(event_service, app.state.catch_up_service)
+        app.state.hermes_client = HermesClient(
+            app_settings.hermes_base_url,
+            app_settings.hermes_timeout_seconds,
+        )
         event_service.refresh()
         yield
 
@@ -49,6 +54,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.middleware("http")
     async def request_context(request: Request, call_next):
         request_id = request.headers.get("X-Request-ID") or str(uuid4())
+        request.state.request_id = request_id
         started = perf_counter()
         response = await call_next(request)
         response.headers["X-Request-ID"] = request_id

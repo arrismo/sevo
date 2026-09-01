@@ -25,7 +25,11 @@ def data_dir(tmp_path: Path) -> Path:
 
 @pytest.fixture
 def settings(tmp_path: Path, data_dir: Path) -> Settings:
-    return Settings(data_dir=data_dir, database_path=tmp_path / "storage" / "sevo.db")
+    return Settings(
+        data_dir=data_dir,
+        database_path=tmp_path / "storage" / "sevo.db",
+        agent_enabled=False,
+    )
 
 
 @pytest.fixture

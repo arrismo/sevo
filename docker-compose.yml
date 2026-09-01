@@ -1,17 +1,52 @@
 services:
+  hermes:
+    image: nousresearch/hermes-agent:v2026.8.27
+    command:
+      - python
+      - -m
+      - uvicorn
+      - main:app
+      - --app-dir
+      - /sevo/hermes_service
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8001"
+    environment:
+      HERMES_HOME: /opt/data
+      PYTHONPATH: /sevo/backend:/opt/hermes
+      SEVO_DATA_DIR: /sevo/data
+      SEVO_DATABASE_PATH: /sevo/storage/sevo.db
+      LM_STUDIO_BASE_URL: ${LM_STUDIO_BASE_URL:-http://host.docker.internal:1234/v1}
+      LM_STUDIO_MODEL: ${LM_STUDIO_MODEL:-}
+      LM_STUDIO_API_KEY: ${LM_STUDIO_API_KEY:-lm-studio}
+      HERMES_MAX_ITERATIONS: ${HERMES_MAX_ITERATIONS:-6}
+    volumes:
+      - ./hermes_service:/sevo/hermes_service:ro
+      - ./backend/app:/sevo/backend/app:ro
+      - ./data:/sevo/data:ro
+      - sevo_storage:/sevo/storage:ro
+    tmpfs:
+      - /opt/data:size=64m,mode=0700
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    expose:
+      - "8001"
+    restart: unless-stopped
+
   backend:
     build: ./backend
     environment:
       SEVO_DATA_DIR: /app/data
       SEVO_DATABASE_PATH: /app/storage/sevo.db
-      LM_STUDIO_BASE_URL: ${LM_STUDIO_BASE_URL:-http://host.docker.internal:1234/v1}
-      LM_STUDIO_MODEL: ${LM_STUDIO_MODEL:-}
-      LM_STUDIO_API_KEY: ${LM_STUDIO_API_KEY:-lm-studio}
+      SEVO_AGENT_ENABLED: ${SEVO_AGENT_ENABLED:-true}
+      HERMES_BASE_URL: http://hermes:8001
+      HERMES_TIMEOUT_SECONDS: ${HERMES_TIMEOUT_SECONDS:-180}
     volumes:
       - ./data:/app/data:ro
       - sevo_storage:/app/storage
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    depends_on:
+      - hermes
     restart: unless-stopped
 
   frontend:

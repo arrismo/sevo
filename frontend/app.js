@@ -17,14 +17,14 @@ async function showResponse(url, options, activeButton) {
 
   try {
     const response = await fetch(url, options);
-    if (!response.ok) throw new Error('Request failed');
-    const payload = await response.json();
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(payload.detail || 'Request failed');
     result.textContent = payload.answer || payload.summary;
     if (payload.unavailable_sources?.length) {
       result.textContent += `\n\nUnavailable: ${payload.unavailable_sources.join(', ')}. Other sources were still checked.`;
     }
-  } catch (_) {
-    result.textContent = 'Sevo could not answer right now. Please try again.';
+  } catch (error) {
+    result.textContent = error.message || 'Sevo could not answer right now. Please try again.';
     result.classList.add('error');
   } finally {
     result.hidden = false;
