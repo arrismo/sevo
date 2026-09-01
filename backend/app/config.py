@@ -17,7 +17,7 @@ class Settings:
     database_path: Path = PROJECT_ROOT / ".sevo" / "sevo.db"
     agent_enabled: bool = True
     hermes_base_url: str = "http://hermes:8001"
-    hermes_timeout_seconds: float = 180.0
+    hermes_timeout_seconds: float = 90.0
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -29,5 +29,5 @@ class Settings:
             ),
             agent_enabled=os.getenv("SEVO_AGENT_ENABLED", "true").casefold() in {"1", "true", "yes"},
             hermes_base_url=os.getenv("HERMES_BASE_URL", "http://hermes:8001").rstrip("/"),
-            hermes_timeout_seconds=float(os.getenv("HERMES_TIMEOUT_SECONDS", "180")),
+            hermes_timeout_seconds=float(os.getenv("HERMES_TIMEOUT_SECONDS", "90")),
         )

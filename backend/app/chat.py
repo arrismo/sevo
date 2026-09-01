@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from datetime import datetime
+import re
 
 from pydantic import BaseModel, Field
 
@@ -37,7 +38,8 @@ class ChatService:
         if any(word in query for word in ("camera", "eufy", "motion", "movement", "front door", "backyard")):
             return self._camera_answer(query)
 
-        if any(word in query for word in ("trending", "trend", "timeline", " x ", "twitter")) or query.startswith("x "):
+        mentions_x = bool(re.search(r"(^|\W)(x|twitter)(\W|$)", query))
+        if mentions_x or any(word in query for word in ("trending", "trend", "timeline")):
             return self._x_answer()
 
         if any(word in query for word in ("calendar", "meeting", "schedule", "appointment", "today", "tomorrow")):

@@ -10,6 +10,56 @@ function setBusy(isBusy, label) {
   if (label) label.firstElementChild.textContent = isBusy ? 'Checking…' : label === askButton ? 'Ask Sevo' : 'Catch me up';
 }
 
+function escapeHtml(value) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function renderInlineMarkdown(value) {
+  return escapeHtml(value).replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+}
+
+function renderMessage(value) {
+  const lines = String(value || '').split(/\r?\n/);
+  const blocks = [];
+  let paragraph = [];
+  let list = [];
+
+  const flushParagraph = () => {
+    if (!paragraph.length) return;
+    blocks.push(`<p>${paragraph.map(renderInlineMarkdown).join('<br>')}</p>`);
+    paragraph = [];
+  };
+
+  const flushList = () => {
+    if (!list.length) return;
+    blocks.push(`<ul>${list.map((item) => `<li>${renderInlineMarkdown(item)}</li>`).join('')}</ul>`);
+    list = [];
+  };
+
+  for (const line of lines) {
+    const item = line.match(/^\s*[-*]\s+(.+)$/);
+    if (item) {
+      flushParagraph();
+      list.push(item[1]);
+    } else if (line.trim() === '') {
+      flushParagraph();
+      flushList();
+    } else {
+      flushList();
+      paragraph.push(line);
+    }
+  }
+
+  flushParagraph();
+  flushList();
+  return blocks.join('');
+}
+
 async function showResponse(url, options, activeButton) {
   setBusy(true, activeButton);
   result.hidden = true;
@@ -19,10 +69,11 @@ async function showResponse(url, options, activeButton) {
     const response = await fetch(url, options);
     const payload = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(payload.detail || 'Request failed');
-    result.textContent = payload.answer || payload.summary;
+    let message = payload.answer || payload.summary || '';
     if (payload.unavailable_sources?.length) {
-      result.textContent += `\n\nUnavailable: ${payload.unavailable_sources.join(', ')}. Other sources were still checked.`;
+      message += `\n\nUnavailable: ${payload.unavailable_sources.join(', ')}. Other sources were still checked.`;
     }
+    result.innerHTML = renderMessage(message);
   } catch (error) {
     result.textContent = error.message || 'Sevo could not answer right now. Please try again.';
     result.classList.add('error');

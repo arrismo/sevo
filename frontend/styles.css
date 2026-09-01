@@ -21,7 +21,13 @@ button:disabled { opacity:.65; cursor:wait; transform:none; }
 .ask-form button { width:145px; flex:none; }
 .divider { width:min(100%,560px); display:flex; align-items:center; gap:12px; margin:14px 0; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.1em; }
 .divider::before,.divider::after { content:""; height:1px; flex:1; background:var(--line); }
-.result { margin-top:24px; padding:22px; border:1px solid var(--line); border-radius:14px; background:var(--card); white-space:pre-line; line-height:1.65; box-shadow:0 8px 30px #32372f0b; }
+.result { margin-top:24px; padding:22px; border:1px solid var(--line); border-radius:14px; background:var(--card); line-height:1.65; box-shadow:0 8px 30px #32372f0b; }
+.result p { margin:0 0 18px; }
+.result p:last-child { margin-bottom:0; }
+.result ul { display:block; list-style:disc; padding-left:1.35em; margin:0 0 18px; }
+.result ul:last-child { margin-bottom:0; }
+.result li { display:list-item; color:var(--ink); font-size:inherit; }
+.result strong { font-weight:700; }
 .result.error { color:#8a342d; border-color:#dfbbb5; }
 footer { border-top:1px solid var(--line); padding-top:20px; color:var(--muted); font-size:12px; }
 footer p { margin:0 0 10px; text-transform:uppercase; letter-spacing:.1em; }
