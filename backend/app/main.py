@@ -40,8 +40,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.settings = app_settings
         app.state.repository = repository
         app.state.event_service = event_service
-        app.state.catch_up_service = CatchUpService(event_service)
-        app.state.chat_service = ChatService(event_service, app.state.catch_up_service)
+        app.state.catch_up_service = CatchUpService(
+            event_service,
+            recent_window_hours=app_settings.recent_window_hours,
+            clock=app_settings.clock,
+        )
+        app.state.chat_service = ChatService(
+            event_service,
+            app.state.catch_up_service,
+            recent_window_hours=app_settings.recent_window_hours,
+        )
         app.state.hermes_client = HermesClient(
             app_settings.hermes_base_url,
             app_settings.hermes_timeout_seconds,

@@ -33,11 +33,23 @@ def test_catch_up_is_concise_and_complete(client: TestClient) -> None:
 
 
 def test_calendar_label_uses_event_timezone(client: TestClient) -> None:
-    # 02:47 UTC is still Aug 31 in the calendar event's -04:00 timezone.
-    now = datetime(2026, 9, 1, 2, 47, tzinfo=timezone.utc)
+    now = datetime(2026, 9, 1, 18, 47, tzinfo=timezone.utc)
     briefing = client.app.state.catch_up_service.build(now=now)
     calendar_item = next(item for item in briefing.items if item.source == "calendar")
     assert "tomorrow" in calendar_item.summary
+
+
+def test_catch_up_excludes_stale_activity_and_past_calendar(client: TestClient) -> None:
+    now = datetime(2026, 9, 3, 18, 0, tzinfo=timezone.utc)
+    briefing = client.app.state.catch_up_service.build(now=now)
+    assert briefing.items == []
+    assert briefing.summary == "0 things worth knowing:\n\nThat's everything notable right now."
+
+
+def test_past_calendar_event_is_not_used_as_upcoming(client: TestClient) -> None:
+    now = datetime(2026, 9, 2, 14, 0, tzinfo=timezone.utc)
+    briefing = client.app.state.catch_up_service.build(now=now)
+    assert "calendar" not in {item.source for item in briefing.items}
 
 
 def test_one_source_failure_returns_partial_briefing(client: TestClient, monkeypatch) -> None:

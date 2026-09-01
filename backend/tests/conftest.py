@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import shutil
 import sys
+from datetime import datetime
 from pathlib import Path
 
 import pytest
@@ -29,6 +30,7 @@ def settings(tmp_path: Path, data_dir: Path) -> Settings:
         data_dir=data_dir,
         database_path=tmp_path / "storage" / "sevo.db",
         agent_enabled=False,
+        clock=lambda: datetime.fromisoformat("2026-09-01T18:39:00-04:00"),
     )
 
 

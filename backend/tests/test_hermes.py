@@ -31,7 +31,7 @@ class StubHermes:
                 status="unavailable",
                 message="LM Studio is not reachable.",
             )
-        return HermesHealth(status="ok", model="local-test-model")
+        return HermesHealth(status="ok", model="local-test-model", mode="hermes")
 
 
 def enable_agent(client: TestClient, stub: StubHermes) -> None:
@@ -70,6 +70,7 @@ def test_health_reports_local_agent_and_model(client: TestClient) -> None:
     assert response.status_code == 200
     assert response.json()["agent"] == "ok"
     assert response.json()["model"] == "local-test-model"
+    assert response.json()["agent_mode"] == "hermes"
 
 
 def test_health_is_degraded_when_agent_is_unavailable(client: TestClient) -> None:

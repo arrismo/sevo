@@ -21,6 +21,7 @@ htmlcov/
 # Local Sevo state and source data
 .sevo/
 data/*.json
+!data/fake_*.json
 *.db
 *.db-shm
 *.db-wal

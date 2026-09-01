@@ -1,0 +1,4 @@
+title = "Sevo secret scanning"
+
+[extend]
+useDefault = true

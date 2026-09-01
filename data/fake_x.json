@@ -1,0 +1,29 @@
+[
+  {
+    "id": "x_001",
+    "author": "@example",
+    "text": "OpenAI announced a new developer feature.",
+    "created_at": "2026-08-31T18:40:00-04:00",
+    "likes": 820,
+    "reposts": 190,
+    "topic": "OpenAI developer news"
+  },
+  {
+    "id": "x_002",
+    "author": "@devnews",
+    "text": "Developers are discussing the new OpenAI tooling.",
+    "created_at": "2026-08-31T19:15:00-04:00",
+    "likes": 540,
+    "reposts": 105,
+    "topic": "OpenAI developer news"
+  },
+  {
+    "id": "x_003",
+    "author": "@sports",
+    "text": "Major discussion around tonight's Yankees game.",
+    "created_at": "2026-08-31T19:05:00-04:00",
+    "likes": 610,
+    "reposts": 120,
+    "topic": "Yankees"
+  }
+]

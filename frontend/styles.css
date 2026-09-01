@@ -9,7 +9,15 @@ header h1 { font-size:18px; letter-spacing:.02em; margin:0; font-weight:600; }
 .hero { margin:auto 0; padding:68px 0; }
 .eyebrow { color:var(--sage); font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; margin:0 0 16px; }
 h2 { max-width:560px; margin:0; font-family:Georgia,"Times New Roman",serif; font-size:clamp(48px,10vw,76px); line-height:.96; font-weight:500; letter-spacing:-.035em; }
-.intro { color:var(--muted); font-size:17px; margin:22px 0 34px; }
+.intro { color:var(--muted); font-size:17px; margin:22px 0 18px; }
+.system-status { width:min(100%,560px); display:flex; align-items:center; gap:9px; margin:0 0 24px; padding:10px 12px; border:1px solid var(--line); border-radius:12px; background:#fffaf0; color:var(--muted); font-size:13px; }
+.system-status i { width:8px; height:8px; border-radius:50%; background:#9aa094; box-shadow:0 0 0 3px #9aa09420; flex:none; }
+.system-status.ok { background:#f5fbf3; color:#385d41; border-color:#cfe0cd; }
+.system-status.ok i { background:#5f956c; box-shadow:0 0 0 3px #5f956c20; }
+.system-status.degraded { background:#fff8ea; color:#74531d; border-color:#ead7ae; }
+.system-status.degraded i { background:#c7922d; box-shadow:0 0 0 3px #c7922d20; }
+.system-status.unavailable { background:#fff1ee; color:#8a342d; border-color:#dfbbb5; }
+.system-status.unavailable i { background:#b45045; box-shadow:0 0 0 3px #b4504520; }
 .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 .ask-form { width:min(100%,560px); display:flex; gap:10px; }
 .ask-form input { min-width:0; flex:1; border:1px solid var(--line); border-radius:14px; padding:16px 18px; background:var(--card); color:var(--ink); font:15px Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; outline:none; box-shadow:0 6px 20px #32372f0a; }

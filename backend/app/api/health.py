@@ -15,6 +15,7 @@ async def health(request: Request, response: Response) -> dict[str, str | None]:
     agent_health = await request.app.state.hermes_client.health()
     payload["agent"] = agent_health.status
     payload["model"] = agent_health.model
+    payload["agent_mode"] = agent_health.mode
     if agent_health.status != "ok":
         response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
         payload["status"] = "degraded"

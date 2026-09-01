@@ -24,9 +24,15 @@ class ChatResponse(BaseModel):
 class ChatService:
     """Route a small, explicit set of read-only intents without an LLM."""
 
-    def __init__(self, event_service: EventService, catch_up_service: CatchUpService) -> None:
+    def __init__(
+        self,
+        event_service: EventService,
+        catch_up_service: CatchUpService,
+        recent_window_hours: float = 48.0,
+    ) -> None:
         self.event_service = event_service
         self.catch_up_service = catch_up_service
+        self.recent_window_hours = recent_window_hours
 
     def answer(self, message: str, now: datetime | None = None) -> ChatResponse:
         query = message.strip().casefold()
@@ -36,11 +42,11 @@ class ChatService:
             return ChatResponse(answer=briefing.summary, sources=[item.source for item in briefing.items])
 
         if any(word in query for word in ("camera", "eufy", "motion", "movement", "front door", "backyard")):
-            return self._camera_answer(query)
+            return self._camera_answer(query, now)
 
         mentions_x = bool(re.search(r"(^|\W)(x|twitter)(\W|$)", query))
         if mentions_x or any(word in query for word in ("trending", "trend", "timeline")):
-            return self._x_answer()
+            return self._x_answer(now)
 
         if any(word in query for word in ("calendar", "meeting", "schedule", "appointment", "today", "tomorrow")):
             return self._calendar_answer(now)
@@ -52,8 +58,12 @@ class ChatService:
             )
         )
 
-    def _camera_answer(self, query: str) -> ChatResponse:
-        snapshot = self.event_service.collect()
+    def _snapshot(self, now: datetime | None):
+        reference = now or self.catch_up_service.clock()
+        return self.event_service.collect().relevant(reference, self.recent_window_hours)
+
+    def _camera_answer(self, query: str, now: datetime | None) -> ChatResponse:
+        snapshot = self._snapshot(now)
         if "eufy" in snapshot.failures:
             return ChatResponse(answer="The Eufy source is currently unavailable.")
 
@@ -77,8 +87,8 @@ class ChatService:
             sources=["eufy"],
         )
 
-    def _x_answer(self) -> ChatResponse:
-        snapshot = self.event_service.collect()
+    def _x_answer(self, now: datetime | None) -> ChatResponse:
+        snapshot = self._snapshot(now)
         if "x" in snapshot.failures:
             return ChatResponse(answer="The X source is currently unavailable.")
         if not snapshot.x_posts:
@@ -96,7 +106,7 @@ class ChatService:
         )
 
     def _calendar_answer(self, now: datetime | None) -> ChatResponse:
-        snapshot = self.event_service.collect()
+        snapshot = self._snapshot(now)
         if "calendar" in snapshot.failures:
             return ChatResponse(answer="The Calendar source is currently unavailable.")
         if not snapshot.calendar_events:

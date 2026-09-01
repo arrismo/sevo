@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import datetime, timedelta
 import logging
 from time import perf_counter
 
@@ -22,6 +23,16 @@ class SourceSnapshot:
     eufy_events: list = field(default_factory=list)
     calendar_events: list = field(default_factory=list)
     failures: dict[str, str] = field(default_factory=dict)
+
+    def relevant(self, now: datetime, recent_window_hours: float) -> "SourceSnapshot":
+        """Keep recent past activity and only genuinely upcoming calendar events."""
+        cutoff = now - timedelta(hours=recent_window_hours)
+        return SourceSnapshot(
+            x_posts=[post for post in self.x_posts if cutoff <= post.created_at <= now],
+            eufy_events=[event for event in self.eufy_events if cutoff <= event.timestamp <= now],
+            calendar_events=[event for event in self.calendar_events if event.start >= now],
+            failures=dict(self.failures),
+        )
 
 
 class EventService:

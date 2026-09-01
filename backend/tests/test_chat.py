@@ -24,7 +24,7 @@ def test_trending_question(client: TestClient) -> None:
 
 
 def test_calendar_question(client: TestClient) -> None:
-    now = datetime(2026, 9, 1, 2, 47, tzinfo=timezone.utc)
+    now = datetime(2026, 9, 1, 18, 47, tzinfo=timezone.utc)
     response = client.app.state.chat_service.answer("What is on my calendar tomorrow?", now=now)
     assert response.sources == ["calendar"]
     assert "Team Standup tomorrow at 9:30 AM" in response.answer

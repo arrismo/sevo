@@ -9,6 +9,13 @@ import httpx
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
+_ALLOWED_TOOLS = {
+    "get_x_timeline",
+    "get_x_summary",
+    "get_eufy_events",
+    "get_calendar_events",
+    "get_recent_events",
+}
 
 
 class HermesUnavailableError(RuntimeError):
@@ -25,6 +32,7 @@ class HermesHealth(BaseModel):
     status: str
     model: str | None = None
     message: str | None = None
+    mode: str | None = None
 
 
 class HermesClient:
@@ -43,6 +51,8 @@ class HermesClient:
                 )
                 response.raise_for_status()
                 reply = HermesReply.model_validate(response.json())
+                if not set(reply.selected_tools).issubset(_ALLOWED_TOOLS):
+                    raise ValueError("Hermes returned an unauthorized tool name")
         except (httpx.HTTPError, ValueError) as exc:
             logger.warning(
                 "hermes_request_failed request_id=%s duration_ms=%.2f error_type=%s",

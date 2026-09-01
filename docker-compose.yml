@@ -20,8 +20,10 @@ services:
       LM_STUDIO_BASE_URL: ${LM_STUDIO_BASE_URL:-http://host.docker.internal:1234/v1}
       LM_STUDIO_MODEL: ${LM_STUDIO_MODEL:-}
       LM_STUDIO_API_KEY: ${LM_STUDIO_API_KEY:-lm-studio}
+      LM_STUDIO_CONTEXT_LENGTH: ${LM_STUDIO_CONTEXT_LENGTH:-16384}
       HERMES_MAX_ITERATIONS: ${HERMES_MAX_ITERATIONS:-2}
-      HERMES_FAST_PATH: ${HERMES_FAST_PATH:-true}
+      HERMES_FAST_PATH: ${HERMES_FAST_PATH:-false}
+      SEVO_RECENT_WINDOW_HOURS: ${SEVO_RECENT_WINDOW_HOURS:-48}
     volumes:
       - ./hermes_service:/sevo/hermes_service:ro
       - ./backend/app:/sevo/backend/app:ro
@@ -42,7 +44,8 @@ services:
       SEVO_DATABASE_PATH: /app/storage/sevo.db
       SEVO_AGENT_ENABLED: ${SEVO_AGENT_ENABLED:-true}
       HERMES_BASE_URL: http://hermes:8001
-      HERMES_TIMEOUT_SECONDS: ${HERMES_TIMEOUT_SECONDS:-90}
+      HERMES_TIMEOUT_SECONDS: ${HERMES_TIMEOUT_SECONDS:-240}
+      SEVO_RECENT_WINDOW_HOURS: ${SEVO_RECENT_WINDOW_HOURS:-48}
     volumes:
       - ./data:/app/data:ro
       - sevo_storage:/app/storage

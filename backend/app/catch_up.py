@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from datetime import datetime
+from typing import Callable
 
 from pydantic import BaseModel, Field
 
@@ -24,12 +25,20 @@ class CatchUpResponse(BaseModel):
 
 
 class CatchUpService:
-    def __init__(self, event_service: EventService) -> None:
+    def __init__(
+        self,
+        event_service: EventService,
+        recent_window_hours: float = 48.0,
+        clock: Callable[[], datetime] | None = None,
+    ) -> None:
         self.event_service = event_service
+        self.recent_window_hours = recent_window_hours
+        self.clock = clock or (lambda: datetime.now().astimezone())
 
     def build(self, now: datetime | None = None) -> CatchUpResponse:
-        snapshot = self.event_service.refresh()
-        items = self._rank(snapshot, now)
+        reference = now or self.clock()
+        snapshot = self.event_service.refresh().relevant(reference, self.recent_window_hours)
+        items = self._rank(snapshot, reference)
         count = len(items)
         heading = f"{count} thing{'s' if count != 1 else ''} worth knowing:"
         bullets = "\n".join(f"• {item.summary}" for item in items)
@@ -77,8 +86,7 @@ class CatchUpService:
 
         if snapshot.calendar_events:
             reference = now or datetime.now().astimezone()
-            upcoming = [event for event in snapshot.calendar_events if event.start >= reference]
-            event = min(upcoming or snapshot.calendar_events, key=lambda item: item.start)
+            event = min(snapshot.calendar_events, key=lambda item: item.start)
             event_reference = reference.astimezone(event.start.tzinfo)
             day_delta = (event.start.date() - event_reference.date()).days
             if day_delta == 0:
