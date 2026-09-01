@@ -1,0 +1,44 @@
+# Local agent instructions
+AGENT.md
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Local Sevo state and source data
+.sevo/
+data/*.json
+*.db
+*.db-shm
+*.db-wal
+
+# Frontend dependencies and build output
+node_modules/
+dist/
+build/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+
+# IDE and operating system files
+.DS_Store
+.idea/
+.vscode/
+
+# Local Docker overrides
+docker-compose.override.yml

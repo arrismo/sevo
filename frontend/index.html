@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f1e8" />
+    <title>Sevo</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header><span class="mark" aria-hidden="true">S</span><h1>Sevo</h1></header>
+      <section class="hero" aria-labelledby="prompt-title">
+        <p class="eyebrow">Your quiet briefing</p>
+        <h2 id="prompt-title">What’s happening?</h2>
+        <p class="intro">Know what matters without opening the feed.</p>
+
+        <form id="ask-form" class="ask-form">
+          <label for="question" class="sr-only">Ask Sevo a question</label>
+          <input id="question" name="question" type="text" maxlength="1000" placeholder="Ask about cameras, X, or your calendar…" autocomplete="off" required />
+          <button id="ask" type="submit" aria-label="Ask Sevo"><span>Ask Sevo</span><span aria-hidden="true">→</span></button>
+        </form>
+
+        <div class="divider"><span>or</span></div>
+
+        <button id="catch-up" type="button">
+          <span>Catch me up</span><span aria-hidden="true">→</span>
+        </button>
+
+        <div id="result" class="result" role="status" aria-live="polite" hidden></div>
+      </section>
+
+      <footer>
+        <p>Connected sources</p>
+        <ul aria-label="Connected sources">
+          <li><i></i>X</li><li><i></i>Eufy</li><li><i></i>Calendar</li>
+        </ul>
+      </footer>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

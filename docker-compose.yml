@@ -1,0 +1,26 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      SEVO_DATA_DIR: /app/data
+      SEVO_DATABASE_PATH: /app/storage/sevo.db
+      LM_STUDIO_BASE_URL: ${LM_STUDIO_BASE_URL:-http://host.docker.internal:1234/v1}
+      LM_STUDIO_MODEL: ${LM_STUDIO_MODEL:-}
+      LM_STUDIO_API_KEY: ${LM_STUDIO_API_KEY:-lm-studio}
+    volumes:
+      - ./data:/app/data:ro
+      - sevo_storage:/app/storage
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "${SEVO_PORT:-3000}:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  sevo_storage:
